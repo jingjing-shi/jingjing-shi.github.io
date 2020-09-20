@@ -21,7 +21,9 @@ navbar-links:
     - Identifying COVID-19 Patients Using Radiography Images: https://github.com/jingjing-shi/COVID-19-Identification
     - Measuring Anti-Chinese Comments in COVID-19 Tweets: https://github.com/jingjing-shi/Covid-19-Sentiment-Analysis
     - Teenager Vaccine Coverage Rates in the US: https://github.com/jingjing-shi/
-  Research: "https://deanattali.com"
+  Research: 
+    - Thesis: https://etda.libraries.psu.edu/files/final_submissions/18421
+    - Paper: https://pubs.acs.org/doi/abs/10.1021/acs.biochem.9b00497
 
 # --- Logo --- #
 
