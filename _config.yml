@@ -17,9 +17,9 @@ navbar-links:
   About Me: "aboutme"
   Project:
     - TFDS Contribution: https://github.com/jingjing-shi/datasets
-    - Stress Monitoring: https://github.com/jingjing-shi/biomedical_data_science
+    - Stress Monitor: https://github.com/jingjing-shi/biomedical_data_science
     - COVID-19 CT Images: https://github.com/jingjing-shi/COVID-19-Identification
-    - COVID-19 Tweets Sentimental Analysis: https://github.com/jingjing-shi/Covid-19-Sentiment-Analysis
+    - COVID-19 Tweets Text Analysis: https://github.com/jingjing-shi/Covid-19-Sentiment-Analysis
     - Teenager Vaccine Rates: https://github.com/jingjing-shi/
   Research: 
     - Thesis: https://etda.libraries.psu.edu/files/final_submissions/18421
