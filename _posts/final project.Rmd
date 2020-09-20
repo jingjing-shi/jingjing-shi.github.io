@@ -1,0 +1,339 @@
+---
+title: "Teenager Vaccination Rates in the United States in 2017 "
+author: "Jingjing Shi"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,include=FALSE,fig.align = "center",out.width = "70%",warning = FALSE)
+```
+
+```{r load_package}
+
+library(miceadds)
+library(e1071)
+library(pROC)
+library(arm)
+library(caret)
+library(lme4)
+library(lmerTest)
+library(maps)
+library(dplyr)
+library(tree)
+library(randomForest)
+library(dplyr)
+library(tidyverse)
+library(VIM)
+library(lattice)
+library(ggplot2)
+library(leaps)
+library(knitr)
+library(gridExtra)
+library(maps)
+library(mapproj)
+library(broom.mixed)
+library(broom)
+
+````
+
+```{r,load_data}
+load.Rdata(filename='path-to-dataNISTEENPUF17.RData','NISTEENPUF17')
+str(NISTEENPUF17)
+summary(NISTEENPUF17)
+NISTEENPUF17$HPVI_ANY[NISTEENPUF17$HPVI_ANY!='YES']= 'NO'
+NISTEENPUF17$MEN_ANY[NISTEENPUF17$MEN_ANY!='YES']= 'NO'
+NISTEENPUF17$TET_ANY[NISTEENPUF17$TET_ANY!='YES']= 'NO'
+NISTEENPUF17$VAC <- 0
+NISTEENPUF17$VAC[NISTEENPUF17$HPVI_ANY=='YES' & NISTEENPUF17$MEN_ANY=='YES'&NISTEENPUF17$TET_ANY=='YES'] <-1
+
+
+data <- data.frame("id"= NISTEENPUF17 $SEQNUMT,"vaccinated"=NISTEENPUF17$VAC,"age"=NISTEENPUF17$AGE,"sex"=NISTEENPUF17$SEX,
+                   "familysize"=NISTEENPUF17$C1R,"children"=NISTEENPUF17$CHILDNM,"race"=NISTEENPUF17$RACEETHK,"income"=NISTEENPUF17$INCPOV1,
+                   "state"=NISTEENPUF17$STATE,"provider"=NISTEENPUF17$PDAT2,"momedu"=NISTEENPUF17$EDUC1,"region"=NISTEENPUF17$CEN_REG)
+
+data$sex <- factor(data$sex,levels=c("MALE","FEMALE"),labels=c("male","female"))
+data$children <- factor(data$children,levels=c("ONE","TWO OR THREE","FOUR OR MORE"),labels=c("1","2 or 3","more than 3"))
+data$momedu<- factor(data$momedu,levels=c("LESS THAN 12 YEARS","12 YEARS","MORE THAN 12 YEARS, NON-COLLEGE GRAD","COLLEGE GRADUATE"),labels=c("< 12 years","high school","some college","college"))
+
+data$provider <- factor(data$provider,levels=c("TEEN HAS ADEQUATE PROVIDER DATA","TEEN DOES NOT HAVE ADEQUATE PROVIDER DATA"),labels=c("Y","N"))
+
+```
+
+**Introduction**
+
+Vaccines developed against viruses have saved many lives, however, safety concerns and efficacy are potential problems in current vaccines. Because of these unresolved problems with current vaccines, there have been increasing concerns about teenagers' vaccination, resulting in anti-vaccination movement across the world. The anti-vaccination movement has a long history, and the widespread anti-vaccination movement in the United States began in 2007. One consequence of the anti-vaccination movement is the recent Measles Outbreak in the United States. In 2014, after 14 years of Measles being eradicated in America, there was a Measles Outbreak started in California. The recent outbreak indicated that the number of people that are choosing not to vaccinate their children is too great to maintain herd immunity. In this report, the vaccination rates in different families across the United States are analyzed, and the families with higher vaccination rates will be identified. The differences in the vaccination coverage rates in different families are useful to increase teenagers' vaccinated rates by targeting lower vaccination rate families.
+
+**Data Processing**
+
+The dataset comes from The National Immunization Survey – Teen (NIS-Teen) in 2017, the NIS-Teen is a list-assisted 
+random-digit-dialing telephone survey of households followed by a mailed survey to teens' immunization providers to monitor teen immunization coverage. The original dataset contains 43591 observations of 691 variables, only the information from the telephone survey is used in the final analysis, because there are a large portion of missing values and unrelated information in the mailed survey. 
+
+Only 12 variables are included in the final report, which is shown in Table 1. The response variable is "Vaccinated", which is defined as 1 when the child is vaccinated to all the vaccines included in the survey. Other variables are mostly demographic characteristics, such as age, sex, race, state, and region. Family-related variables are useful to infer family impact on vaccination rates, including family size, children number, the income of the household, and mother's education level. One other important variable is "Provider" if the child has adequate provider information, then the child is categorized as 1. "Provider" is a useful identifier because a child with adequate provider information has a higher probability to get vaccinated, and also indicating parents paying more attention to child's immunity protection.
+
+
+*Table. 1 Code Book*
+
+
+|Variable|Type       |Explanation|
+|:------:|:---------:|:---------:|
+|   id     |     Identifier      |       Unique Tenn Identifier    |
+|  Vaccinated      |   Binary        |       1: Vaccinated to all vaccines 0: Not vaccinated to all vaccines    |
+|   Age     |       Factor    |      Teen's age (13 to 17)     |
+|    Sex    |      Binary     |     Male or Female      |
+|   Family Size     |    Factor       |     Number of people in household (1 to 8) |
+|   Children     |    Factor       |      Number of children in household (1, 2 or 3, and 3 more)     |
+|     Race   |        Factor   |     Race of teen (Hispanic, White, Black and Other)      |
+|     Income   |      Factor     |     Family Income (Above Poverty >75K,Above Poverty <=75K, Below Poverty, Unknown)      |
+|   State    |     Factor      |    True state of residence       |
+|   Provider     |    Binary       |    Adequate provider data or not       |
+|    Momedu    |   Factor     |      Education level of mother (<12 years, high school, some college and college) |
+|    Region   |     Facor      |        Census Region ( Northeast, Midwest, South and West)   |
+
+
+**Exploratory Data Analysis**
+
+Explanatory data analysis (EDA) was first performed to analyze the data set to summarize the main characteristics. The overall vaccination rates in this dataset of 32.94%, and since all the variables in this dataset are categorical, tables are used for the conditional probabilities of factor variables to see how the probability of vaccinated changes for different levels of factor variables, which in other words are the probabilities for vaccinated given each level of factor variables. Take family size for example (shown in Table 2), the vaccination rate decreases with the increase of family size. Or, a chi-squared test could be performed to test the independence between vaccinated and each other factor variable. The results from chi-squared tests which evaluate the independence of each factor variable with the response variable, and there might be differences between levels in demographic variables and family-related variables regarding the vaccination rate. The relationship between state is unclear just by a chi-square test, it could be further determined in the model assessment. From the vaccination rate alone, Kansas, Mississippi, and Wyoming are of the lowest coverage rates, while Rhode Island, North Dakota and District of Columbia are the highest.
+
+*Table 2. Conditional Probability of Vaccinated in Different Family Size*
+
+|（Vaccinated）| 2 | 3| 4|5|6|7|8+|
+|:-------------:|:----------------:|:------------------:|:----------------:|:---:|:---:|:---:|:---:|
+|No| 0.67|0.66|0.66|0.68|0.70|0.72|0.72|
+|Yes| 0.33|0.34|0.34|0.32|0.30|0.28|0.28|
+```{r conditional probability}
+
+#Conditional Probability
+
+apply(table(data[,c("vaccinated","sex")])/sum(table(data[,c("vaccinated","sex")])),
+      2,function(x) x/sum(x)) 
+chisq.test(table(data[,c("vaccinated","sex")]))
+apply(table(data[,c("vaccinated","familysize")])/sum(table(data[,c("vaccinated","familysize")])),
+      2,function(x) x/sum(x)) 
+chisq.test(table(data[,c("vaccinated","familysize")]))
+apply(table(data[,c("vaccinated","children")])/sum(table(data[,c("vaccinated","children")])),
+      2,function(x) x/sum(x)) 
+chisq.test(table(data[,c("vaccinated","children")]))
+apply(table(data[,c("vaccinated","income")])/sum(table(data[,c("vaccinated","income")])),
+      2,function(x) x/sum(x)) 
+chisq.test(table(data[,c("vaccinated","income")]))
+apply(table(data[,c("vaccinated","state")])/sum(table(data[,c("vaccinated","state")])),
+      2,function(x) x/sum(x)) 
+chisq.test(table(data[,c("vaccinated","state")]))
+apply(table(data[,c("vaccinated","provider")])/sum(table(data[,c("vaccinated","provider")])),
+      2,function(x) x/sum(x)) 
+chisq.test(table(data[,c("vaccinated","provider")]))
+apply(table(data[,c("vaccinated","momedu")])/sum(table(data[,c("vaccinated","momedu")])),
+      2,function(x) x/sum(x)) 
+chisq.test(table(data[,c("vaccinated","momedu")]))
+apply(table(data[,c("vaccinated","region")])/sum(table(data[,c("vaccinated","region")])),
+      2,function(x) x/sum(x)) 
+chisq.test(table(data[,c("vaccinated","region")]))
+```
+
+```{r, include=TRUE}
+us_states <- map_data("state")
+vac <- data.frame("state"=c("ALABAMA","DELAWARE","DISTRICT OF COLUMBIA","FLORIDA","GEORGIA","HAWAII","IDAHO","ILLINOIS",
+                            "INDIANA","IOWA","ALASKA","KANSAS","KENTUCKY","LOUISIANA","MAINE","MARYLAND","MASSACHUSETTS","MICHIGAN",
+                            "MINNESOTA","MISSISSIPPI","MISSOURI","MONTANA","NEBRASKA","NEVADA","NEW HAMPSHIRE","NEW JERSEY",
+                            "NEW MEXICO","NEW YORK","NORTH CAROLINA","NORTH DAKOTA","OHIO","ARIZONA","OKLAHOMA",
+                            "OREGON","PENNSYLVANIA","RHODE ISLAND","SOUTH CAROLINA","SOUTH DAKOTA","TENNESSEE","TEXAS",
+                            "UTAH","ARKANSAS","VERMONT","VIRGINIA","WASHINGTON","WEST VIRGINIA","WISCONSIN","WYOMING",
+                            "CALIFORNIA","COLORADO","CONNECTICUT"),
+                  "vaccination"=c(0.2893082,0.3569364,0.4214765,0.2985537,0.2924282,0.2752294,0.3382789,0.3618650,
+                                  0.2894356,0.3430894,0.273402,0.2423313,0.2961433,0.3356164,0.3677812,0.3580019,0.3711083,0.3289280,
+                                  0.3240997,0.2479339,0.3365922,0.2628099,0.2968254,0.3223767,0.3401760,0.3256881,
+                                  0.3255814,0.3610203,0.3305785,0.4251497,0.3670886,0.2915567,0.2947067,
+                                  0.3215797,0.3962830,0.4784111,0.2623829,0.3726813,0.2927536,0.3096142,
+                                  0.3072546,0.2939522,0.3573770,0.3496358,0.3530259,0.3471646,0.3291339,0.2554348,
+                                  0.3170732,0.3513514,0.3877841
+                                  ))
+vac$region <- tolower(vac$state)
+us_states_vac <- left_join(us_states,vac,by='region')
+
+p0 <- ggplot(data = us_states_vac,
+             mapping = aes(x = long, y = lat, group = group, fill = vaccination))
+
+p1 <- p0 + geom_polygon(color = "gray90", size = 0.1) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) 
+
+p2 <- p1 + scale_fill_gradient2() + labs(title = "Figure. 1 Vaccination Rate 2017") 
+p2
+```
+
+In terms of interaction, interesting interactions include provider with other family-related variables regarding vaccination rates, and region with some family-related variables in terms of vaccination rates. Figure. 2 shows the vaccination count in different children number* provider data level, which suggests that families have 2 or 3 children with adequate provider data are most likely to get children vaccinated. Figure. 3 shows the vaccination count in different income * region level, and south families with the highest income have the highest vaccinated counts. These interactions could be further investigated by either interaction terms or a potential hierarchical model.
+
+```{r include=TRUE,out.width="100%"}
+provider_children <- data %>% group_by(provider,children) %>% count(vaccinated) %>% filter(vaccinated==1)
+
+i1<-ggplot(provider_children,aes(x=provider,y=n,fill=provider))+
+  geom_col()+
+  labs(title="Figure.2 \n Interaction between Children Number and Provider",x="Children Number",y="Vaccinated Count") +
+  facet_wrap(~children,ncol=3)+
+  theme(legend.position = 'top',axis.text.x = element_blank(),legend.title = element_text(size=5),legend.text = element_text(size=5),plot.title = element_text(size=9))
+
+region_income <- data %>% group_by(region,income) %>% count(vaccinated) %>% filter(vaccinated==1)
+
+i2<-ggplot(region_income,aes(x=region,y=n,fill=region))+
+  geom_col()+
+  labs(title="Figure.3 Interaction between Income and Region",x="Income",y="Vaccinated Count") +
+  facet_wrap(~income,ncol=2)+
+  theme(legend.position = "top",axis.text.x = element_blank(),legend.title = element_text(size=5),legend.text = element_text(size=5),plot.title = element_text(size=10))
+grid.arrange(i1, i2, ncol=2)
+```
+**Model and Results**
+
+Vaccinated was treated as the response variable and the others were treated as potential explanatory variables. Since Vaccinated is a binary variable, so a logistic regression model with multiple predictors is used here. 
+$$ \Pr[Vaccinated=1[x_i]=\pi_i]\  and\  \Pr[Vaccinated=0[x_i]=1-\pi_i]\ with $$
+$${\log(\frac{\hat\pi_i}{1-\hat\pi_i})}=\hat\beta_0+\hat\beta_{1}Age+\hat\beta_2Sex+\hat\beta_{3}Race+\hat\beta_{4}Provider+\hat\beta_{5}Momedu+\hat\beta_{6}Age*Sex$$
+
+```{r model}
+train_index <- sample(1:nrow(data),0.8*nrow(data))
+test_index <- setdiff(1:nrow(data),train_index)
+training <- data[train_index,]
+test <- data[test_index,]
+#model <- glm(vaccinated~age+sex+familysize+children+race+income+state+provider+momedu,data=training,family = binomial)
+###full_model <- glm(vaccinated~age*(sex+familysize+children+race+income+state+provider+momedu)
+#                  +sex*(familysize+children+race+income+state+provider+momedu)+
+#                    familysize*(children+race+income+state+provider+momedu)+
+#                    children*(race+income+state+provider+momedu)
+#                  +race*(income+state+provider+momedu)+
+#                    income*(state+provider+momedu)+
+#                    state*(provider+momedu)+provider*momedu,data=training,family = binomial)
+
+n <- nrow(training)
+null_model <- glm(vaccinated~provider,data=training,family = binomial)
+#Model_stepwise <- step(null_model, scope = formula(full_model),direction="both",trace=0,
+#                       k = log(n))
+
+model <- glm(vaccinated~provider + momedu + age + sex + race + 
+    age:sex,data=training,family = binomial)
+
+````
+This final model was refined from the model generalized from EDA analysis.  Originally, there were nine possible variables from the EDA model. The data is randomly selected in an 8:2 ratio to training and test group. A stepwise BIC selection is used to finalize model, the full model includes all 9 variables and all possible interactions and null model only includes provider, which is of high importance according to EDA. BIC is used here to avoid possible overfitting by adding a larger penalty term for the number of parameters in the model than AIC. After this stepwise selection, only provider,momedu, age, sex, race, and interaction between age and sex were kept in the final model.
+
+To further test the final model from EDA, an F-test between a full model with all the variables after EDA and the selected model was performed to see if all the dropped variables were truly non-significant. Similarly, a model with all the variables and all the interactions terms were compared with the selected model. The F-test returns a high p-value which confirmed our final model.
+
+From the EDA, the vaccination rates in different provider level and state level show different trends regarding other predictors, so a multi-level model by provider and region is also evaluated. Region is used instead of state, firstly because region can cover the most characteristics from state but with fewer categories, and R can handle at most 50 levels in multi-level. The final multi-level model only includes random slopes of mother's education by region.
+
+```{r multi-level}
+model_multi <- glmer(vaccinated~provider + momedu + age + sex + race + 
+    age:sex+(0+momedu|region),data=training,family = binomial,control=glmerControl(optimizer="bobyqa"))
+summary(model_multi)
+coef(model_multi)
+fixef(model_multi)
+
+exp(fixef(model_multi))
+
+ranef(model_multi)
+plot(model_multi)
+dotplot(ranef(model_multi,condVar=TRUE))
+
+```
+
+**Model Assessment**
+
+*Figure 4. Binned Residual Plots of Predicted Probabilites*
+```{r include=TRUE}
+rawresid <- residuals(model,"resp")
+
+binnedplot(x=fitted(model),y=rawresid,xlab="Pred. probabilities",
+           col.int="red4",ylab="Avg. residuals",main=NULL,col.pts="navy")
+```
+
+Binned residual plots of the multi-level model were performed to assess the selected model. The residuals were well spread out, and not many observations outside the SD lines. The trends were different for different sections of each variable, but not much else to worry about.
+
+**Model Validation**
+
+```{r random forest}
+
+training_rf <- randomForest(as.factor(training$vaccinated) ~ age+sex+familysize+children+race+income+region+provider+momedu,data=training, importance =TRUE)
+training_rf
+varImpPlot(training_rf)
+Conf_mat_rf <- confusionMatrix(predict(training_rf,type="response"),
+                               as.factor(training$vaccinated),positive = "1")
+Conf_mat_rf$table 
+Conf_mat_rf$overall["Accuracy"]
+
+Conf_mat_rf$byClass[c("Sensitivity","Specificity")]
+roc(training$vaccinated,predict(training_rf,type="prob")[,2],plot=T,print.thres="best",legacy.axes=T,print.auc =T,col="red3")
+
+```
+
+```{r model validation }
+invisible(roc(training$vaccinated,fitted(model),plot=T,print.thres="best",legacy.axes=T,
+              print.auc =T,col="red3",levels=c(0,1),direction = "<"))
+Conf_mat <- confusionMatrix(as.factor(ifelse(fitted(model) >= mean(training$vaccinated), "1","0")),as.factor(training$vaccinated),positive = "1")
+Conf_mat$table
+Conf_mat$overall["Accuracy"]
+Conf_mat$byClass[c("Sensitivity","Specificity")]
+
+invisible(roc(training$vaccinated,fitted(model_multi),plot=T,print.thres="best",legacy.axes=T,
+              print.auc =T,col="red3",levels=c(0,1),direction = "<"))
+Conf_mat_multi <- confusionMatrix(as.factor(ifelse(fitted(model) >= mean(training$vaccinated), "1","0")),as.factor(training$vaccinated),positive = "1")
+Conf_mat_multi$table
+Conf_mat_multi$overall["Accuracy"]
+Conf_mat_multi$byClass[c("Sensitivity","Specificity")]
+
+
+```
+```{r test data}
+Conf_mattest <- confusionMatrix(as.factor(ifelse(predict(model,test,type="response") >= mean(test$vaccinated), "1","0")),as.factor(test$vaccinated),positive = "1")
+Conf_mattest$table
+Conf_mattest$overall["Accuracy"]
+Conf_mattest$byClass[c("Sensitivity","Specificity")]
+
+Conf_mat_multitest <- confusionMatrix(as.factor(ifelse(predict(model_multi,test,type='response') >= mean(test$vaccinated), "1","0")),as.factor(test$vaccinated),positive = "1")
+Conf_mat_multitest$table
+Conf_mat_multitest$overall["Accuracy"]
+Conf_mat_multitest$byClass[c("Sensitivity","Specificity")]
+
+Conf_mat_rftest <- confusionMatrix(predict(training_rf,test,type="response"),
+                               as.factor(test$vaccinated),positive = "1")
+Conf_mat_rftest$table 
+Conf_mat_rftest$overall["Accuracy"]
+
+Conf_mat_rftest$byClass[c("Sensitivity","Specificity")]
+```
+Another binary classification learning algorithm, Random Forest is used to comparing with the result from the logistic model. The sensitivity of a model is defined as the true positive rate (TPR), and specificity is the true negative rate (TNR). In these models, when set confusion matrix threshold as the marginal percentage in the data, then the sensitivity, specificity, and accuracy of training and test are summarized in the table below. The results from the traning and test data are pretty similar, with accuracies around 0.6, which suggests no overfitting is observed.The ROC curve is pretty tight to the line with an accuracy of around 0.6, which suggests a not strongly predictive logistic regression. The accuracy from the random forest is higher (0.66), but the sensitivity is very low (<0.1) which suggests random forest does not accurately predict child who vaccinated.
+
+*Table. 3 Confusion Matrix Summary*
+
+|Model|Data|Sensitivity|Specificity|Accuracy|
+|:---:|:---:|:---:|:---:|:---:|
+|Logistic|Training|0.5701|0.5553|0.5602|
+|Logistic|Test|0.4955|0.6314|0.5850｜
+|Multi-level|Training|0.5841|0.5662|0.5721|
+|Multi-level|Test|0.5052|0.6182|0.5797｜
+|RandomForest|Training|0.0834|0.9425|0.6588|
+|RandomForest|Test|0.0826|0.9457|0.6642|
+
+**Model Interpretations**
+
+Intuitively, we have an overall "average" regression line for all vaccination rates across all families. This general estimated line suggests that for a Hispanic 13 years old male child, with adequate provider data, and mother's education level is high school, if the child does not have adequate provider data, then the vaccination probability will decrease by 30%, and each year increase results in a 6.69% increase. Female has a 54% lower probability of getting vaccinated, and Black children have the highest vaccination rates.
+
+From the final model, the unexplained within-region variation was attributed to only random slope by mom's education. Table.2 summarizes the random effects in different regions. In the northeast region, when the mother's education is in college, the children have the highest vaccination rate.
+
+
+*Table. 4 Random Effects of Different Regions*
+
+
+|Region|High school|Some college|College| 
+|:---:|:-----:|:----:|:---:|
+|NORTHEAST |   0.1581  |    0.1587  | 0.1405|
+|MIDWEST  |    -0.0042  |   -0.0360 |-0.0133|
+|SOUTH    |   -0.0598   |    0.0302 | -0.0260|
+|WEST     |    -0.0938|   -0.1527 | -0.10010|
+
+*Figure 5. Random Effects in Different Regions*
+```{r include=TRUE,results='hide',message=FALSE}
+dotplot(ranef(model_multi,condVar=TRUE))
+```
+
+**Limitations and Conclusions**
+
+The model successfully explains the differences in the vaccination coverage rates in different families, but the accuracy of the models are not perfect. Even though the project is more focused on inference, there are some possible solutions to improve accuracy. Firstly, the vaccines covered in this survey are only 4, and there are in total of 12 vaccines required by CDC. If a more complete vaccination survey could be performed, a more accurate analysis could be generated. Also, the multi-level logistics model is grouping by region instead of state, even though region is important in explaining the different vaccination rates, state should be a better predictor. The performance of the logistics model could be better if a reasonable re-grouping of the 50 states is used. 
+
+The multi-level model suggests that the vaccination rates are different in regions by mother's education, even while controlling for other predictors and random effects. State-wise conclusion is that Rhode Island has the highest vaccination rate, Mississippi has the lowest vaccination rate; considering region, the northeast region has the highest vaccination rates while the west is the lowest. This is helpful to explain why the measles outbreak started in California. To increase the vaccination coverage rates across the country, the less-educated parents need to be convinced to vaccinate their children. 
