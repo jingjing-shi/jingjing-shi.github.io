@@ -16,11 +16,11 @@ url: "https://jingjing-shi.github.io"
 navbar-links:
   About Me: "aboutme"
   Project:
-    - TFDS Open Source Contribution: https://github.com/jingjing-shi/datasets
-    - Biometric for stress monitoring: https://github.com/jingjing-shi/biomedical_data_science
-    - Identifying COVID-19 Patients Using Radiography Images: https://github.com/jingjing-shi/COVID-19-Identification
-    - Measuring Anti-Chinese Comments in COVID-19 Tweets: https://github.com/jingjing-shi/Covid-19-Sentiment-Analysis
-    - Teenager Vaccine Coverage Rates in the US: https://github.com/jingjing-shi/
+    - TFDS Contribution: https://github.com/jingjing-shi/datasets
+    - Stress Monitoring: https://github.com/jingjing-shi/biomedical_data_science
+    - COVID-19 CT Images: https://github.com/jingjing-shi/COVID-19-Identification
+    - COVID-19 Tweets Sentimental Analysis: https://github.com/jingjing-shi/Covid-19-Sentiment-Analysis
+    - Teenager Vaccine Rates: https://github.com/jingjing-shi/
   Research: 
     - Thesis: https://etda.libraries.psu.edu/files/final_submissions/18421
     - Paper: https://pubs.acs.org/doi/abs/10.1021/acs.biochem.9b00497
@@ -80,7 +80,7 @@ share-links-active:
 
 # How to display the link to your website in the footer
 # Remove this if you don't want a link in the footer
-url-pretty: "https://jingjing-shi.github.io/"
+url-pretty: "jingjing-shi"
 
 # Excerpt word length - Truncate the excerpt of each post on the feed page to the specified number of words
 excerpt_length: 50
