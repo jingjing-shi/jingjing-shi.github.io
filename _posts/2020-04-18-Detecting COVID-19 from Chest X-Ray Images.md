@@ -18,7 +18,7 @@ recall on the COVID-19 class. This report, however, is merely a
 feasibility study, as existing datasets are not yet reliable enough to
 be used in earnest.
 
-**Introduction **
+**Introduction**
 
 Viruses are infectious agents that can only replicate within the cells
 of living hosts \[1\]. Disease outbreaks caused by viruses often pose a
