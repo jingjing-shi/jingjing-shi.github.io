@@ -184,9 +184,11 @@ Size*
 </table>
 
 <img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-1-1.png" >
+
 In terms of interaction, interesting interactions include provider with
 other family-related variables regarding vaccination rates, and region
 with some family-related variables in terms of vaccination rates.
+
 Figure. 2 shows the vaccination count in different children number\*
 provider data level, which suggests that families have 2 or 3 children
 with adequate provider data are most likely to get children vaccinated.
@@ -197,6 +199,7 @@ vaccinated counts. These interactions could be further investigated by
 either interaction terms or a potential hierarchical model.
 
 <img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-2-1.png" >
+
 **Model and Results**
 
 Vaccinated was treated as the response variable and the others were
