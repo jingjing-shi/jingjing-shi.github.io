@@ -50,7 +50,7 @@ approach since the storage of electrical energy is easier compared to
 thermal energy. Moreover, solar PV could take advantage of the current
 energy transmission system, making the transition from natural gas
 energy sources to solar energy sources easier and cheaper. However, PV
-modules convert only around 10\%-20\% of the solar radiation into
+modules convert only around 10%-20% of the solar radiation into
 electrical energy, therefore, a further investigation of improving PV
 modules' efficiency is required.
 
@@ -113,7 +113,7 @@ installations and 50 that did not contain rooftop PV installations. Each
 figure was cropped to a rectangular region containing the rooftop and
 the surrounding area. The decision algorithm consisted of two parts:
 prescreening and feature processing. Prescreening first converts all
-images into grayscale and reduces the region by removing the lowest 30\%
+images into grayscale and reduces the region by removing the lowest 30%
 of pre-screener confidence values. The features examined here include
 foreground color, background color, and shape features. Then an SVM
 classifier was utilized to generate the final list of detected regions.
@@ -235,27 +235,27 @@ satellite aerial imagery\[10\]. One must acknowledge that this paper
 differs from Malof *et al* \[10\], who were trying to locate
 photovoltaic panels in aerial images, this paper is trying to identify
 if such a panel is present. These important differences notwithstanding,
-Malof *et al* \[10\]. were able to use an SVM to achieve a 94\% correct
+Malof *et al* \[10\]. were able to use an SVM to achieve a 94% correct
 prediction rate. Though Malof *et al* \[10\]. did not use HOG as a
 pre-processing state for their analysis, literature from other fields
 offers examples of how combining HOG with SVM can be successful. Bakheet
-\[19\] achieved 98\% sensitivity and 96\% specificity when combining these
+\[19\] achieved 98% sensitivity and 96% specificity when combining these
 techniques to identify malignant melanomas from images of a patient\'s
 skin.
 
 A less impressive result was obtained by Sun and Watada \[20\], who
 combined HOG and SVM to identify pedestrians and vehicles in a traffic
-light scene. These authors obtained a 75\% correct detection rate. Cao,
+light scene. These authors obtained a 75% correct detection rate. Cao,
 Wu and Li \[21\] use the same approach to identify vehicles based on
-low-altitude aerial images but arrive at a 90\% correct detection rate
-with a 10\% false positive rate. Dadi & Pillutla \[18\] used a
+low-altitude aerial images but arrive at a 90% correct detection rate
+with a 10% false positive rate. Dadi & Pillutla \[18\] used a
 combination of HOG and SVM for facial recognition to improve on the
 performance of previous models. There is also evidence in literature
 that suggests that HOG and SVM perform better than other approaches with
 noisy data. Radman, Zainal and Suandi \[22\] combined HOG and SVM to
 identify pixels which correspond to human irises in pictures gathered in
 an unconstrained environment. They find their method to improve the
-previous benchmark by 11\% . The combination of HOG and SVM has been
+previous benchmark by 11% . The combination of HOG and SVM has been
 found to significantly outperform previous methods in some fields.
 Hence, the combination of HOG and SVM as an image recognition algorithm
 is well documented in literature as an approach that produces successful
@@ -486,7 +486,7 @@ Figure 8. Confusion Matrices of Different Models
 
 From the confusion matrices shown in figure 8, it could be concluded
 that models including CNNs produced higher accuracy compared to the SVM
-models. 33\% of images that contained solar panels were identified as not
+models. 33% of images that contained solar panels were identified as not
 having any in Canny-SVM, and this was also a problem in HOG-SVM, which
 suggested that SVMs might struggle with finding all solar panels. CNN
 models performed better in general, however, they produced more false
