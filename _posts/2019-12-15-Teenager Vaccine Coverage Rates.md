@@ -183,8 +183,7 @@ Size*
 </tbody>
 </table>
 
-<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-1-1.png" >{ width: 200px; }
-
+<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-1-1.png" >
 In terms of interaction, interesting interactions include provider with
 other family-related variables regarding vaccination rates, and region
 with some family-related variables in terms of vaccination rates.
@@ -197,7 +196,7 @@ level, and south families with the highest income have the highest
 vaccinated counts. These interactions could be further investigated by
 either interaction terms or a potential hierarchical model.
 
-<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-2-1.png" >{ width: 200px; }
+<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-2-1.png" >
 **Model and Results**
 
 Vaccinated was treated as the response variable and the others were
@@ -234,7 +233,7 @@ includes random slopes of mother’s education by region.
 **Model Assessment**
 
 *Figure 4. Binned Residual Plots of Predicted Probabilities*
-<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-3-1.png" >{ width: 200px; }
+<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-3-1.png" >
 
 Binned residual plots of the multi-level model were performed to assess
 the selected model. The residuals were well spread out, and not many
