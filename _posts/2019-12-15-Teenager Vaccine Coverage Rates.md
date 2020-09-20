@@ -115,7 +115,7 @@ indicating parents paying more attention to child’s immunity protection.
 </tr>
 <tr class="even">
 <td style="text-align: center;">Region</td>
-<td style="text-align: center;">Facor</td>
+<td style="text-align: center;">Factor</td>
 <td style="text-align: center;">Census Region ( Northeast, Midwest, South and West)</td>
 </tr>
 </tbody>
@@ -125,7 +125,7 @@ indicating parents paying more attention to child’s immunity protection.
 
 Explanatory data analysis (EDA) was first performed to analyze the data
 set to summarize the main characteristics. The overall vaccination rates
-in this dataset of 32.94%, and since all the variables in this dataset
+in this dataset of 32.94\%, and since all the variables in this dataset
 are categorical, tables are used for the conditional probabilities of
 factor variables to see how the probability of vaccinated changes for
 different levels of factor variables, which in other words are the
@@ -183,7 +183,7 @@ Size*
 </tbody>
 </table>
 
-<img src="final-project_files/figure-markdown_strict/unnamed-chunk-1-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-1-1.png" width="70\%" style="display: block; margin: auto;" />
 
 In terms of interaction, interesting interactions include provider with
 other family-related variables regarding vaccination rates, and region
@@ -196,16 +196,14 @@ level, and south families with the highest income have the highest
 vaccinated counts. These interactions could be further investigated by
 either interaction terms or a potential hierarchical model.
 
-<img src="final-project_files/figure-markdown_strict/unnamed-chunk-2-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-2-1.png" width="100\%" style="display: block; margin: auto;" />
 **Model and Results**
 
 Vaccinated was treated as the response variable and the others were
 treated as potential explanatory variables. Since Vaccinated is a binary
 variable, so a logistic regression model with multiple predictors is
 used here.
-Pr \[*V**a**c**c**i**n**a**t**e**d* = 1\[*x*<sub>*i*</sub>\] = *π*<sub>*i*</sub>\] *a**n**d* Pr \[*V**a**c**c**i**n**a**t**e**d* = 0\[*x*<sub>*i*</sub>\] = 1 − *π*<sub>*i*</sub>\] *w**i**t**h*
-$${\\log(\\frac{\\hat\\pi\_i}{1-\\hat\\pi\_i})}=\\hat\\beta\_0+\\hat\\beta\_{1}Age+\\hat\\beta\_2Sex+\\hat\\beta\_{3}Race+\\hat\\beta\_{4}Provider+\\hat\\beta\_{5}Momedu+\\hat\\beta\_{6}Age\*Sex$$
-
+<img src="/assets/img/final-project_files/figure-markdown_strict/equation.png" >
 This final model was refined from the model generalized from EDA
 analysis. Originally, there were nine possible variables from the EDA
 model. The data is randomly selected in an 8:2 ratio to training and
@@ -213,8 +211,8 @@ test group. A stepwise BIC selection is used to finalize model, the full
 model includes all 9 variables and all possible interactions and null
 model only includes provider, which is of high importance according to
 EDA. BIC is used here to avoid possible overfitting by adding a larger
-penalty term for the number of parameters in the model than AIC. After
-this stepwise selection, only provider,momedu, age, sex, race, and
+penalty term for the number of parameters in the model compared to AIC. After
+this stepwise selection, only provider, momedu, age, sex, race, and
 interaction between age and sex were kept in the final model.
 
 To further test the final model from EDA, an F-test between a full model
@@ -234,8 +232,8 @@ includes random slopes of mother’s education by region.
 
 **Model Assessment**
 
-*Figure 4. Binned Residual Plots of Predicted Probabilites*
-<img src="final-project_files/figure-markdown_strict/unnamed-chunk-3-1.png" width="70%" style="display: block; margin: auto;" />
+*Figure 4. Binned Residual Plots of Predicted Probabilities*
+<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-3-1.png" width="70\%" style="display: block; margin: auto;" />
 
 Binned residual plots of the multi-level model were performed to assess
 the selected model. The residuals were well spread out, and not many
@@ -250,7 +248,7 @@ a model is defined as the true positive rate (TPR), and specificity is
 the true negative rate (TNR). In these models, when set confusion matrix
 threshold as the marginal percentage in the data, then the sensitivity,
 specificity, and accuracy of training and test are summarized in the
-table below. The results from the traning and test data are pretty
+table below. The results from the training and test data are pretty
 similar, with accuracies around 0.6, which suggests no overfitting is
 observed.The ROC curve is pretty tight to the line with an accuracy of
 around 0.6, which suggests a not strongly predictive logistic
@@ -283,7 +281,7 @@ not accurately predict child who vaccinated.
 <td style="text-align: center;">Test</td>
 <td style="text-align: center;">0.4955</td>
 <td style="text-align: center;">0.6314</td>
-<td style="text-align: center;">0.5850｜</td>
+<td style="text-align: center;">0.5850</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Multi-level</td>
@@ -297,7 +295,7 @@ not accurately predict child who vaccinated.
 <td style="text-align: center;">Test</td>
 <td style="text-align: center;">0.5052</td>
 <td style="text-align: center;">0.6182</td>
-<td style="text-align: center;">0.5797｜</td>
+<td style="text-align: center;">0.5797</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">RandomForest</td>
@@ -323,8 +321,8 @@ vaccination rates across all families. This general estimated line
 suggests that for a Hispanic 13 years old male child, with adequate
 provider data, and mother’s education level is high school, if the child
 does not have adequate provider data, then the vaccination probability
-will decrease by 30%, and each year increase results in a 6.69%
-increase. Female has a 54% lower probability of getting vaccinated, and
+will decrease by 30\%, and each year increase results in a 6.69\%
+increase. Female has a 54\% lower probability of getting vaccinated, and
 Black children have the highest vaccination rates.
 
 From the final model, the unexplained within-region variation was
@@ -373,7 +371,7 @@ vaccination rate.
 </table>
 
 *Figure 5. Random Effects in Different Regions*
-<img src="final-project_files/figure-markdown_strict/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" />
+<img src="/assets/img/final-project_files/figure-markdown_strict/unnamed-chunk-4-1.png" width="70\%" style="display: block; margin: auto;" />
 
 **Limitations and Conclusions**
 
