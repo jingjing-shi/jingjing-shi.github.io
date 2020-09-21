@@ -15,12 +15,11 @@ url: "https://jingjing-shi.github.io"
 
 navbar-links:
   About Me: "aboutme"
-  Project:
+  Current Project:
     - TFDS Contribution: https://github.com/jingjing-shi/datasets
     - Stress Monitor: https://github.com/jingjing-shi/biomedical_data_science
-    - COVID-19 CT Images: https://github.com/jingjing-shi/COVID-19-Identification
-    - COVID-19 Tweets Text Analysis: https://github.com/jingjing-shi/Covid-19-Sentiment-Analysis
-    - Teenager Vaccine Rates: https://github.com/jingjing-shi/
+    - Disease Emergence and Richness: https://bigdata.duke.edu/sites/bigdata.duke.edu/files/site-images/Disease%20Emergence.pdf
+    
   Research: 
     - Thesis: https://etda.libraries.psu.edu/files/final_submissions/18421
     - Paper: https://pubs.acs.org/doi/abs/10.1021/acs.biochem.9b00497
