@@ -13,13 +13,13 @@
 
 *Covid-19 Twitter Chatter Dataset for Scientific Use*
 
-([PanaceaLab](http://www.panacealab.org/covid19/)
+([PanaceaLab](http://www.panacealab.org/covid19/))
 
-● Data collected from Twitter stream
+* Data collected from Twitter stream 
 
-● Keywords: COVD19, CoronavirusPandemic, COVID-19, covid19, 2019nCoV,CoronaOutbreak, coronavirus, WuhanVirus,coronaviruspandemic, covid-19,2019ncov, coronaoutbreak, wuhanvirus
+* Keywords: COVD19, CoronavirusPandemic, COVID-19, covid19, 2019nCoV,CoronaOutbreak, coronavirus, WuhanVirus,coronaviruspandemic, covid-19,2019ncov, coronaoutbreak, wuhanvirus
 
-● Tweet IDs + Timestamps
+* Tweet IDs + Timestamps
 
 
 
@@ -27,17 +27,19 @@
 
 **Data Processing**
 
-● 24.7 million tweets that tweeted after March 1st to April 7th were gathered
-● 10% of tweets were hydrated
-● 90,000 tweets contained keywords about China
+* 24.7 million tweets that tweeted after March 1st to April 7th were gathered
+
+* 10% of tweets were hydrated
+
+* 90,000 tweets contained keywords about China
 
 **Sentiment Model**
 
-● A deep learning model that labels texts with their likelihoods of containing comments that fall into any of the following categories: severely toxic, identity attack, insult and threat was trained. 
+* A deep learning model that labels texts with their likelihoods of containing comments that fall into any of the following categories: severely toxic, identity attack, insult and threat was trained. 
 
-● The model was trained on an annotated comments dataset provided by Jigsaw's conversation AI team.
-	● Information about the labeling schema used to create that dataset is available on the dataset's webpage.
-	● The model scored an average of 0.98 AUC score across the labels.C
+* The model was trained on an annotated comments dataset provided by Jigsaw's conversation AI team.
+	* Information about the labeling schema used to create that dataset is available on the dataset's webpage.
+	* The model scored an average of 0.98 AUC score across the labels.C
 	
 **Results**
 
